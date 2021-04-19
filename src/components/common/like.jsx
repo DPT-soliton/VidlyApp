@@ -1,12 +1,22 @@
-import React, { Component } from 'react';
+import React from "react";
+// import React, { Component } from "react";
 
-/**Input: Liked: boolean */
-/**Output: onClick */
+/* Convert class based components to stateless functional components */
+const Like = (props) => {
+  let classes = "fa fa-heart";
+  if (!props.liked) classes += "-o";
+  return <i className={classes} onClick={props.onLike} style={{ cursor: "pointer" }} aria-hidden="true"></i>;
+};
 
-class Like extends Component {
-    render() { 
-        return ( <i className="fa fa-heart" aria-hidden="true"></i> );
-    }
-}
- 
 export default Like;
+
+/* Class based components */
+// class Like extends Component {
+//   render() {
+//     let classes = "fa fa-heart";
+//     if (!this.props.liked) classes += "-o";
+//     return <i className={classes} onClick={this.props.onLike} aria-hidden="true"></i>;
+//   }
+// }
+
+// export default Like;

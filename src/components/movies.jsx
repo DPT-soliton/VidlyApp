@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-import { getMovies} from "../services/fakeMovieService";
+import { getMovies } from "../services/fakeMovieService";
 import Like from "./common/like";
-import Unliked from "./common/unlike";
+// import Unliked from "./common/unlike";
 
 class Movies extends Component {
   state = {
@@ -11,19 +11,18 @@ class Movies extends Component {
   };
 
   handleDelete = (id) => {
-    const movies =this.state.movies.filter((m)=>m._id!==id);
+    const movies = this.state.movies.filter((m) => m._id !== id);
     console.log("Delete Clicked", this);
-    this.setState({movies: movies});
+    this.setState({ movies: movies });
   };
 
-  handleLike =(movie) =>{
-    console.log("liked clicked");
-    const update_movies =[...this.state.movies];
-    const index =update_movies.indexOf(movie);
-    update_movies[index] ={...movie};
-    !update_movies[index].like? update_movies[index].like=true : update_movies[index].like=false;
-    this.setState({movies: update_movies})
-    console.log(index,update_movies);
+  handleLike = (movie) => {
+    console.log("Liked");
+    const update_movies = [...this.state.movies];
+    const index = update_movies.indexOf(movie);
+    update_movies[index] = { ...movie };
+    update_movies[index].liked = !update_movies[index].liked;
+    this.setState({ movies: update_movies });
   };
 
   img_style = {
@@ -42,11 +41,7 @@ class Movies extends Component {
           <div className="container container-fluid">
             <h1 className="lead text-white">
               <span className="m-2">
-                <img
-                  style={this.img_style}
-                  src={this.state.imageUrl}
-                  alt="movieUrlImage"
-                ></img>
+                <img style={this.img_style} src={this.state.imageUrl} alt="movieUrlImage"></img>
               </span>
               List of Movies
             </h1>
@@ -56,8 +51,7 @@ class Movies extends Component {
           No more movies in the database.
         </p>
         <p className="lead" hidden={this.state.movies.length === 0}>
-          The are {this.state.movies.length}{" "}
-          {this.state.movies.length > 1 ? "movies" : "movie"} in the database.
+          The are {this.state.movies.length} {this.state.movies.length > 1 ? "movies" : "movie"} in the database.
         </p>
         <table className="table" hidden={this.state.movies.length <= 0}>
           <thead>
@@ -77,12 +71,11 @@ class Movies extends Component {
                 <td>{m.genre.name}</td>
                 <td>{m.numberInStock}</td>
                 <td>{m.dailyRentalRate}</td>
-                <td><button className="btn btn-primary-outline" onClick={()=>this.handleLike(m)}>{m.like? <Like />:<Unliked />}</button></td>
                 <td>
-                  <button
-                    className="btn btn-danger btn-sm"
-                    onClick={()=>this.handleDelete(m._id)}
-                  >
+                  <Like liked={m.liked} onLike={() => this.handleLike(m)} />
+                </td>
+                <td>
+                  <button className="btn btn-danger btn-sm" onClick={() => this.handleDelete(m._id)}>
                     Delete
                   </button>
                 </td>
