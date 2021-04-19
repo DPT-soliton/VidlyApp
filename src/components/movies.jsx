@@ -1,11 +1,14 @@
 import React, { Component } from "react";
 import { getMovies } from "../services/fakeMovieService";
 import Like from "./common/like";
-// import Unliked from "./common/unlike";
+import Pagination from "./common/pagination";
+import paginate from "../utils/paginate";
 
 class Movies extends Component {
   state = {
     movies: getMovies(),
+    page_size: 4,
+    current_page: 1,
     imageUrl: "https://picsum.photos/50",
     liked: false,
   };
@@ -25,16 +28,23 @@ class Movies extends Component {
     this.setState({ movies: update_movies });
   };
 
+  handlePageChange = (page) => {
+    this.setState({ current_page: page });
+  };
+
   img_style = {
     borderRadius: 50,
     margin: 2,
   };
-
   header = {
     borderRadius: 5,
   };
 
   render() {
+    const { length: count } = this.state.movies;
+    const { current_page, page_size, movies: all_movies } = this.state;
+    const movies = paginate(all_movies, current_page, page_size);
+
     return (
       <div className="container container-fluid py-5 ">
         <nav className="navbar navbar-light bg-secondary " style={this.header}>
@@ -65,7 +75,7 @@ class Movies extends Component {
             </tr>
           </thead>
           <tbody>
-            {this.state.movies.map((m) => (
+            {movies.map((m) => (
               <tr key={m._id}>
                 <td>{m.title}</td>
                 <td>{m.genre.name}</td>
@@ -83,6 +93,7 @@ class Movies extends Component {
             ))}
           </tbody>
         </table>
+        <Pagination items_count={count} current_page={current_page} page_size={page_size} onPageChange={this.handlePageChange} />
       </div>
     );
   }
