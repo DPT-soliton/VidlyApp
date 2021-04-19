@@ -1,20 +1,29 @@
 import React, { Component } from "react";
-import { getMovies, deleteMovie } from "../services/fakeMovieService";
+import { getMovies} from "../services/fakeMovieService";
+import Like from "./common/like";
+import Unliked from "./common/unlike";
 
 class Movies extends Component {
   state = {
     movies: getMovies(),
     imageUrl: "https://picsum.photos/50",
+    liked: false,
   };
 
   handleDelete = (id) => {
+    const movies =this.state.movies.filter((m)=>m._id!==id);
     console.log("Delete Clicked", this);
-    this.setState(deleteMovie(id));
+    this.setState({movies: movies});
   };
 
-  getKey = (id) => {
-    console.log("Clicked", id);
-    this.handleDelete(id);
+  handleLike =(movie) =>{
+    console.log("liked clicked");
+    const update_movies =[...this.state.movies];
+    const index =update_movies.indexOf(movie);
+    update_movies[index] ={...movie};
+    !update_movies[index].like? update_movies[index].like=true : update_movies[index].like=false;
+    this.setState({movies: update_movies})
+    console.log(index,update_movies);
   };
 
   img_style = {
@@ -25,6 +34,7 @@ class Movies extends Component {
   header = {
     borderRadius: 5,
   };
+
   render() {
     return (
       <div className="container container-fluid py-5 ">
@@ -57,6 +67,7 @@ class Movies extends Component {
               <th scope="col">Stock</th>
               <th scope="col">Rate</th>
               <th scope="col"></th>
+              <th scope="col"></th>
             </tr>
           </thead>
           <tbody>
@@ -66,10 +77,11 @@ class Movies extends Component {
                 <td>{m.genre.name}</td>
                 <td>{m.numberInStock}</td>
                 <td>{m.dailyRentalRate}</td>
+                <td><button className="btn btn-primary-outline" onClick={()=>this.handleLike(m)}>{m.like? <Like />:<Unliked />}</button></td>
                 <td>
                   <button
                     className="btn btn-danger btn-sm"
-                    onClick={() => this.getKey(m._id)}
+                    onClick={()=>this.handleDelete(m._id)}
                   >
                     Delete
                   </button>
