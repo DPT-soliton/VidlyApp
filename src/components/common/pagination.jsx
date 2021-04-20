@@ -1,19 +1,27 @@
 import React from "react";
-import _ from "lodash";
+import _ from "lodash"; /**Use in pagination */
+import PropTypes from "prop-types"; /**Use for props type checking */
 
 const Pagination = (props) => {
   const { items_count, page_size, onPageChange, current_page } = props;
-  console.log(current_page);
+  console.log("Page ", current_page);
   const page_count = Math.ceil(items_count / page_size);
   /**[1...pagesCount] */
 
+  /**Nothing to render */
   if (page_count === 1) return null;
+
+  /**Will create an array of pages */
   const pages = _.range(1, page_count + 1);
+
   return (
     <nav aria-label="Page navigation example justify-content-center">
       <ul className="pagination justify-content-center">
         {pages.map((page) => (
-          <li className={page === current_page ? "page-item active" : "page-item"} key={page}>
+          <li
+            key={page}
+            className={page === current_page ? "page-item active" : "page-item"}
+          >
             <a className="page-link" onClick={() => onPageChange(page)}>
               {page}
             </a>
@@ -22,6 +30,13 @@ const Pagination = (props) => {
       </ul>
     </nav>
   );
+};
+
+Pagination.propTypes = {
+  items_count: PropTypes.number.isRequired,
+  page_size: PropTypes.number.isRequired,
+  onPageChange: PropTypes.func.isRequired,
+  current_page: PropTypes.number.isRequired,
 };
 
 export default Pagination;
