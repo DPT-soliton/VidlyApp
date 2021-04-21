@@ -12,13 +12,15 @@ class Movies extends Component {
     genres: [],
     page_size: 4,
     current_page: 1,
+    select_all: false,
     imageUrl: "https://picsum.photos/50",
     liked: false,
   };
 
   /**This will be calle when an instance of this component is rendered to the DOM */
   componentDidMount() {
-    this.setState({ movies: getMovies(), genres: getGenres() });
+    const genres = [{ name: "All Genres" }, ...getGenres()];
+    this.setState({ movies: getMovies(), genres: genres });
   }
 
   handleDelete = (id) => {
@@ -46,7 +48,7 @@ class Movies extends Component {
     //   (m) => m.genre.name === genre
     // );
     // this.setState({ movies: filter_movies });
-    this.setState({ selected_genre: genre });
+    this.setState({ selected_genre: genre, current_page: 1 });
   };
 
   img_style = {
@@ -58,41 +60,26 @@ class Movies extends Component {
   };
 
   render() {
-    const { length: count } = this.state.movies;
-    const {
-      current_page,
-      page_size,
-      movies: all_movies,
-      selected_genre,
-    } = this.state;
-    const filtered = selected_genre
-      ? all_movies.filter((m) => m.genre._id === selected_genre._id)
-      : all_movies;
+    /**Desctructuring state objects */
+    // const { length: count } = this.state.movies;
+    const { current_page, page_size, movies: all_movies /**movies asign to alias all_movies to avoid conflict */, selected_genre } = this.state;
+
+    const filtered = selected_genre && selected_genre._id ? all_movies.filter((m) => m.genre._id === selected_genre._id) : all_movies;
+
     const movies = paginate(filtered, current_page, page_size);
 
     return (
       <div className="row px-5">
         <div className="col-md-3 py-5">
-          <ListGroup
-            items={this.state.genres}
-            selected_item={this.state.selected_genre}
-            onItemSelect={this.handleGenreSelect}
-          />
+          <ListGroup items={this.state.genres} selected_item={this.state.selected_genre} onItemSelect={this.handleGenreSelect} />
         </div>
 
         <div className="col py-5">
-          <nav
-            className="navbar navbar-light bg-secondary "
-            style={this.header}
-          >
+          <nav className="navbar navbar-light bg-secondary " style={this.header}>
             {/* <div className="container container-fluid"> */}
             <h1 className="lead text-white">
               <span className="m-2">
-                <img
-                  style={this.img_style}
-                  src={this.state.imageUrl}
-                  alt="movieUrlImage"
-                ></img>
+                <img style={this.img_style} src={this.state.imageUrl} alt="movieUrlImage"></img>
               </span>
               List of Movies
             </h1>
@@ -102,8 +89,7 @@ class Movies extends Component {
             No more movies in the database.
           </p>
           <p className="lead" hidden={this.state.movies.length === 0}>
-            The are {filtered.length}{" "}
-            {this.state.movies.length > 1 ? "movies" : "movie"} in the database.
+            The are {filtered.length} {this.state.movies.length > 1 ? "movies" : "movie"} in the database.
           </p>
           <table className="table" hidden={this.state.movies.length <= 0}>
             <thead>
@@ -127,10 +113,7 @@ class Movies extends Component {
                     <Like liked={m.liked} onLike={() => this.handleLike(m)} />
                   </td>
                   <td>
-                    <button
-                      className="btn btn-danger btn-sm"
-                      onClick={() => this.handleDelete(m._id)}
-                    >
+                    <button className="btn btn-danger btn-sm" onClick={() => this.handleDelete(m._id)}>
                       Delete
                     </button>
                   </td>
@@ -138,12 +121,7 @@ class Movies extends Component {
               ))}
             </tbody>
           </table>
-          <Pagination
-            items_count={filtered.length}
-            current_page={current_page}
-            page_size={page_size}
-            onPageChange={this.handlePageChange}
-          />
+          <Pagination items_count={filtered.length} current_page={current_page} page_size={page_size} onPageChange={this.handlePageChange} />
         </div>
       </div>
     );

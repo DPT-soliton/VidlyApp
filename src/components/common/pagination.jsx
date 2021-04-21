@@ -4,7 +4,7 @@ import PropTypes from "prop-types"; /**Use for props type checking */
 
 const Pagination = (props) => {
   const { items_count, page_size, onPageChange, current_page } = props;
-  console.log("Page ", current_page);
+  // console.log("Page ", current_page);
   const page_count = Math.ceil(items_count / page_size);
   /**[1...pagesCount] */
 
@@ -18,11 +18,8 @@ const Pagination = (props) => {
     <nav aria-label="Page navigation example justify-content-center">
       <ul className="pagination justify-content-center">
         {pages.map((page) => (
-          <li
-            key={page}
-            className={page === current_page ? "page-item active" : "page-item"}
-          >
-            <a className="page-link" onClick={() => onPageChange(page)}>
+          <li key={page} className={page === current_page ? "page-item active" : "page-item"}>
+            <a className="page-link" onClick={() => onPageChange(page)} href="# ">
               {page}
             </a>
           </li>
