@@ -1,18 +1,19 @@
 import React, { Component } from "react";
 import { getMovies } from "../services/fakeMovieService";
 import { getGenres } from "../services/fakeGenreService";
-
 import Pagination from "./common/pagination";
 import paginate from "../utils/paginate";
 import ListGroup from "./common/listGroup";
-import MoviesTable from "./moviesTable";
+import MovieTables from "./moviesTable";
+import _ from "lodash";
 
 class Movies extends Component {
   state = {
     movies: [],
     genres: [],
-    page_size: 4,
+    page_size: 8,
     current_page: 1,
+    sortColumn: { path: "title", order: "asc" },
     select_all: false,
     imageUrl: "https://picsum.photos/50",
     liked: false,
@@ -20,7 +21,7 @@ class Movies extends Component {
 
   /**This will be calle when an instance of this component is rendered to the DOM */
   componentDidMount() {
-    const genres = [{ name: "All Genres" }, ...getGenres()];
+    const genres = [{ _id: "", name: "All Genres" }, ...getGenres()];
     this.setState({ movies: getMovies(), genres: genres });
   }
 
@@ -52,14 +53,18 @@ class Movies extends Component {
     this.setState({ selected_genre: genre, current_page: 1 });
   };
 
+  handleSort = (sortColumn) => {
+    this.setState({ sortColumn });
+  };
+
   render() {
     /**Desctructuring state objects */
     // const { length: count } = this.state.movies;
-    const { current_page, page_size, movies: all_movies /**movies asign to alias all_movies to avoid conflict */, selected_genre } = this.state;
+    const { current_page, page_size, movies: all_movies, selected_genre, sortColumn } = this.state;
 
     const filtered = selected_genre && selected_genre._id ? all_movies.filter((m) => m.genre._id === selected_genre._id) : all_movies;
-
-    const movies = paginate(filtered, current_page, page_size);
+    const sorted = _.orderBy(filtered, [sortColumn.path], [sortColumn.order]);
+    const movies = paginate(sorted, current_page, page_size);
 
     return (
       <div>
@@ -68,7 +73,14 @@ class Movies extends Component {
             <ListGroup items={this.state.genres} selected_item={this.state.selected_genre} onItemSelect={this.handleGenreSelect} />
           </div>
           <div className="col">
-            <MoviesTable movies={movies} filtered={filtered} state={this.state} onLike={this.handleLike} onDelete={this.handleDelete} />
+            <MovieTables
+              movies={movies}
+              filtered={filtered}
+              state={this.state}
+              onLike={this.handleLike}
+              onDelete={this.handleDelete}
+              onSort={this.handleSort}
+            />
           </div>
         </div>
         <Pagination items_count={filtered.length} current_page={current_page} page_size={page_size} onPageChange={this.handlePageChange} />
