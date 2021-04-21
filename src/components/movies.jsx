@@ -1,10 +1,11 @@
 import React, { Component } from "react";
 import { getMovies } from "../services/fakeMovieService";
 import { getGenres } from "../services/fakeGenreService";
-import Like from "./common/like";
+
 import Pagination from "./common/pagination";
 import paginate from "../utils/paginate";
 import ListGroup from "./common/listGroup";
+import MoviesTable from "./moviesTable";
 
 class Movies extends Component {
   state = {
@@ -51,14 +52,6 @@ class Movies extends Component {
     this.setState({ selected_genre: genre, current_page: 1 });
   };
 
-  img_style = {
-    borderRadius: 50,
-    margin: 2,
-  };
-  header = {
-    borderRadius: 5,
-  };
-
   render() {
     /**Desctructuring state objects */
     // const { length: count } = this.state.movies;
@@ -69,60 +62,16 @@ class Movies extends Component {
     const movies = paginate(filtered, current_page, page_size);
 
     return (
-      <div className="row px-5">
-        <div className="col-md-3 py-5">
-          <ListGroup items={this.state.genres} selected_item={this.state.selected_genre} onItemSelect={this.handleGenreSelect} />
+      <div>
+        <div className="row px-5">
+          <div className="col-md-3 py-5">
+            <ListGroup items={this.state.genres} selected_item={this.state.selected_genre} onItemSelect={this.handleGenreSelect} />
+          </div>
+          <div className="col">
+            <MoviesTable movies={movies} filtered={filtered} state={this.state} onLike={this.handleLike} onDelete={this.handleDelete} />
+          </div>
         </div>
-
-        <div className="col py-5">
-          <nav className="navbar navbar-light bg-secondary " style={this.header}>
-            {/* <div className="container container-fluid"> */}
-            <h1 className="lead text-white">
-              <span className="m-2">
-                <img style={this.img_style} src={this.state.imageUrl} alt="movieUrlImage"></img>
-              </span>
-              List of Movies
-            </h1>
-            {/* </div> */}
-          </nav>
-          <p className="lead" hidden={!this.state.movies.length <= 0}>
-            No more movies in the database.
-          </p>
-          <p className="lead" hidden={this.state.movies.length === 0}>
-            The are {filtered.length} {this.state.movies.length > 1 ? "movies" : "movie"} in the database.
-          </p>
-          <table className="table" hidden={this.state.movies.length <= 0}>
-            <thead>
-              <tr>
-                <th scope="col">Title</th>
-                <th scope="col">Genre</th>
-                <th scope="col">Stock</th>
-                <th scope="col">Rate</th>
-                <th scope="col"></th>
-                <th scope="col"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {movies.map((m) => (
-                <tr key={m._id}>
-                  <td>{m.title}</td>
-                  <td>{m.genre.name}</td>
-                  <td>{m.numberInStock}</td>
-                  <td>{m.dailyRentalRate}</td>
-                  <td>
-                    <Like liked={m.liked} onLike={() => this.handleLike(m)} />
-                  </td>
-                  <td>
-                    <button className="btn btn-danger btn-sm" onClick={() => this.handleDelete(m._id)}>
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <Pagination items_count={filtered.length} current_page={current_page} page_size={page_size} onPageChange={this.handlePageChange} />
-        </div>
+        <Pagination items_count={filtered.length} current_page={current_page} page_size={page_size} onPageChange={this.handlePageChange} />
       </div>
     );
   }
