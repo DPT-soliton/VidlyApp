@@ -1,19 +1,22 @@
 import React, { Component } from "react";
 import Like from "./common/like";
+import TableHeader from "../components/common/tableHeader";
 
 class MoviesTable extends Component {
-  raiseSort = (path) => {
-    const sortColumn = { ...this.props.state.sortColumn };
-    if (sortColumn.path === path) {
-      sortColumn.order = sortColumn.order === "asc" ? "desc" : "asc";
-    } else {
-      sortColumn.path = path;
-      sortColumn.order = "asc";
-    }
-    this.props.onSort(sortColumn);
-  };
+  /**Columns for Table Header component */
+  columns = [
+    { path: "title", label: "Title" },
+    { path: "genre.name", label: "Genre" },
+    { path: "numberInStock", label: "Stock" },
+    { path: "dailyRentalRate", label: "Rate" },
+    { key: "dummyKey1" },
+    { key: "dummyKey2" },
+  ];
+
   render() {
-    const { movies, filtered, state, onLike, onDelete } = this.props;
+    /**Desctructuring props objects */
+    const { movies, filtered, state, onLike, onDelete, onSort } = this.props;
+
     let img_style = {
       borderRadius: 50,
       margin: 2,
@@ -21,43 +24,30 @@ class MoviesTable extends Component {
     let header = {
       borderRadius: 5,
     };
+
     return (
       <div className="py-5">
         <nav className="navbar navbar-light bg-secondary " style={header}>
-          {/* <div className="container container-fluid"> */}
           <h1 className="lead text-white">
             <span className="m-2">
               <img style={img_style} src={state.imageUrl} alt="movieUrlImage"></img>
             </span>
             List of Movies
           </h1>
-          {/* </div> */}
         </nav>
-        <p className="lead" hidden={!state.movies.length <= 0}>
+
+        <p className="lead" hidden={!filtered.length <= 0}>
           No more movies in the database.
         </p>
-        <p className="lead" hidden={state.movies.length === 0}>
-          The are {filtered.length} {state.movies.length > 1 ? "movies" : "movie"} in the database.
+        <p className="lead" hidden={filtered.length === 0}>
+          The are {filtered.length} {filtered.length > 1 ? "movies" : "movie"} in the database.
         </p>
+
         <table className="table" hidden={state.movies.length <= 0}>
           <thead>
-            <tr>
-              <th onClick={() => this.raiseSort("title")} scope="col">
-                Title
-              </th>
-              <th onClick={() => this.raiseSort("genre.name")} scope="col">
-                Genre
-              </th>
-              <th onClick={() => this.raiseSort("numberInStock")} scope="col">
-                Stock
-              </th>
-              <th onClick={() => this.raiseSort("publishDate")} scope="col">
-                Rate
-              </th>
-              <th scope="col"></th>
-              <th scope="col"></th>
-            </tr>
+            <TableHeader columns={this.columns} sortColumn={state.sortColumn} onSort={onSort} />
           </thead>
+
           <tbody>
             {movies.map((m) => (
               <tr key={m._id}>
