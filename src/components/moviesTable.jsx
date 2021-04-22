@@ -44,9 +44,7 @@ class MoviesTable extends Component {
         </p>
 
         <table className="table" hidden={state.movies.length <= 0}>
-          <thead>
-            <TableHeader columns={this.columns} sortColumn={state.sortColumn} onSort={onSort} />
-          </thead>
+          <TableHeader columns={this.columns} sortColumn={state.sortColumn} onSort={onSort} />
           <TableBody movies={movies} onLike={onLike} onDelete={onDelete} />
         </table>
       </div>

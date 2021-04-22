@@ -17,14 +17,16 @@ class TableHeader extends Component {
   };
   render() {
     return (
-      <tr>
-        {this.props.columns.map((column) => (
-          <th key={column.path || column.key} onClick={() => this.raiseSort(column.path)}>
-            {column.label}
-          </th>
-        ))}
-        <th></th>
-      </tr>
+      <thead>
+        <tr>
+          {this.props.columns.map((column) => (
+            <th key={column.path || column.key} onClick={() => this.raiseSort(column.path)}>
+              {column.label}
+            </th>
+          ))}
+          <th></th>
+        </tr>
+      </thead>
     );
   }
 }
