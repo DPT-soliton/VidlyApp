@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import TableHeader from "../components/common/tableHeader";
 import TableBody from "../components/common/tableBody";
+import Like from "../components/common/like";
 
 class MoviesTable extends Component {
   /**Columns for Table Header component */
@@ -9,8 +10,15 @@ class MoviesTable extends Component {
     { path: "genre.name", label: "Genre" },
     { path: "numberInStock", label: "Stock" },
     { path: "dailyRentalRate", label: "Rate" },
-    { key: "dummyKey1" },
-    { key: "dummyKey2" },
+    { key: "dummyKey1", content: (movie) => <Like liked={movie.liked} onLike={() => this.props.onLike(movie)} /> },
+    {
+      key: "dummyKey2",
+      content: (movie) => (
+        <button className="btn btn-danger btn-sm" onClick={() => this.props.onDelete(movie._id)}>
+          Delete
+        </button>
+      ),
+    },
   ];
 
   render() {
@@ -43,9 +51,9 @@ class MoviesTable extends Component {
           The are {filtered.length} {filtered.length > 1 ? "movies" : "movie"} in the database.
         </p>
 
-        <table className="table" hidden={state.movies.length <= 0}>
+        <table className="table table-hover" hidden={state.movies.length <= 0}>
           <TableHeader columns={this.columns} sortColumn={state.sortColumn} onSort={onSort} />
-          <TableBody movies={movies} onLike={onLike} onDelete={onDelete} />
+          <TableBody data={movies} columns={this.columns} onLike={onLike} onDelete={onDelete} />
         </table>
       </div>
     );

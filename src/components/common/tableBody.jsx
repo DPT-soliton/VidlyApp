@@ -1,13 +1,31 @@
 import React, { Component } from "react";
-import Like from "./like";
+import _ from "lodash";
 
 class TableBody extends Component {
+  renderCell = (item, column) => {
+    if (column.content) return column.content(item);
+    else {
+      return _.get(item, column.path);
+    }
+  };
+
+  create_uniqueKey = (item, column) => {
+    return item._id + (column.path || column.key);
+  };
+
   render() {
-    const { movies, onLike, onDelete } = this.props;
+    const { data, columns } = this.props;
 
     return (
       <tbody>
-        {movies.map((m) => (
+        {data.map((item) => (
+          <tr key={item._id}>
+            {columns.map((column) => (
+              <td key={this.create_uniqueKey(item, column)}>{this.renderCell(item, column)}</td>
+            ))}
+          </tr>
+        ))}
+        {/* {movies.map((m) => (
           <tr key={m._id}>
             <td>{m.title}</td>
             <td>{m.genre.name}</td>
@@ -22,7 +40,7 @@ class TableBody extends Component {
               </button>
             </td>
           </tr>
-        ))}
+        ))} */}
       </tbody>
     );
   }
