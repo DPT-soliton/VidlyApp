@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 import TableHeader from "../components/common/tableHeader";
 import TableBody from "../components/common/tableBody";
 import Like from "../components/common/like";
@@ -6,7 +7,7 @@ import Like from "../components/common/like";
 class MoviesTable extends Component {
   /**Columns for Table Header component */
   columns = [
-    { path: "title", label: "Title" },
+    { path: "title", label: "Title", content: (movie) => <Link to={`/movies/${movie._id}`}>{movie.title}</Link> },
     { path: "genre.name", label: "Genre" },
     { path: "numberInStock", label: "Stock" },
     { path: "dailyRentalRate", label: "Rate" },
